@@ -19,7 +19,7 @@ import {MainHeader} from '../component/Mainheader';
 export interface Category {
   id: string;
   name: string;
-  image: string | null;
+  image: string;
 }
 
 const predefinedCategories: Category[] = [
@@ -48,51 +48,62 @@ const predefinedCategories: Category[] = [
     name: 'Category 5',
     image: 'https://via.placeholder.com/60',
   },
-  {
-    id: '6',
-    name: 'Category 6',
-    image: 'https://via.placeholder.com/60',
-  },
-  {
-    id: '7',
-    name: 'Category 7',
-    image: 'https://via.placeholder.com/60',
-  },
-  {
-    id: '8',
-    name: 'Category 8',
-    image: 'https://via.placeholder.com/60',
-  },
-  {
-    id: '9',
-    name: 'Category 9',
-    image: 'https://via.placeholder.com/60',
-  },
-  {
-    id: '10',
-    name: 'Category 10',
-    image: 'https://via.placeholder.com/60',
-  },
+  // {
+  //   id: '6',
+  //   name: 'Category 6',
+  //   image: 'https://via.placeholder.com/60',
+  // },
+  // {
+  //   id: '7',
+  //   name: 'Category 7',
+  //   image: 'https://via.placeholder.com/60',
+  // },
+  // {
+  //   id: '8',
+  //   name: 'Category 8',
+  //   image: 'https://via.placeholder.com/60',
+  // },
+  // {
+  //   id: '9',
+  //   name: 'Category 9',
+  //   image: 'https://via.placeholder.com/60',
+  // },
+  // {
+  //   id: '10',
+  //   name: 'Category 10',
+  //   image: 'https://via.placeholder.com/60',
+  // },
 ];
 
 export const HomeScreen: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [modelVisible, setModalVisible] = useState(false);
 
-  const bttonsArray = [
+  const buttonsArray = [
     {
       name: 'Add Product',
-      onPress: () => {},
+      onPress: (item: string) => {
+        console.log('eoreuioaos');
+        navigate({
+          screenName: Routes.Category,
+          params: {
+            item: item,
+          },
+        });
+      },
     },
     {
       name: 'Edit',
-      onPress: item => {
-        editCategory(item);
+      onPress: (item: string) => {
+        navigate({
+          screenName: Routes.Category,
+          params: {item: item},
+        });
       },
     },
     {
       name: 'Delete',
-      onPress: () => {},
+      onPress: (item: string) => {},
     },
   ];
 
@@ -125,40 +136,26 @@ export const HomeScreen: React.FC = () => {
     await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
   };
 
-  const editCategory = (item: Category) => {
-    navigate({
-      screenName: Routes.Category,
-      params: {item: item},
-    });
-  };
+  const editCategory = (item: Category) => {};
 
   return (
     <View style={styles.maincontainer}>
       <MainHeader />
       <View style={{marginHorizontal: 12}}>
-        <Pressable
-          onPress={() => navigate({screenName: Routes.Category})}
-          style={{marginTop: 20}}>
-          <Text style={{color: color.black}}>Add Item</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => navigate({screenName: Routes.Product})}
-          style={{marginTop: 20}}>
-          <Text style={{color: color.black}}>ProductScreen</Text>
-        </Pressable>
         <FlatList
           data={categories}
           keyExtractor={item => item.id}
           scrollEnabled={true}
           renderItem={({item}) => (
-            <Pressable
-              onPress={() =>
-                navigate({
-                  screenName: Routes.Product,
-                  params: {categoryId: item.id, categoryName: item.name},
-                })
-              }>
-              <View style={styles.categoryItem}>
+            <View>
+              <Pressable
+                onPress={() =>
+                  navigate({
+                    screenName: Routes.Product,
+                    params: {categoryId: item.id, categoryName: item.name},
+                  })
+                }
+                style={styles.categoryItem}>
                 {item.image && (
                   <Image
                     source={{uri: item.image}}
@@ -168,24 +165,14 @@ export const HomeScreen: React.FC = () => {
                 <View style={styles.categoryDetails}>
                   <Text style={styles.categoryText}>{item.name}</Text>
                 </View>
-                {/*<View style={styles.btncontaner}>*/}
-                {/*  <Pressable onPress={() => editCategory(item)}>*/}
-                {/*    <Text style={styles.editbtn}>Edit</Text>*/}
-                {/*  </Pressable>*/}
-                {/*  <Pressable*/}
-                {/*    onPress={() => deleteCategory(item.id)}*/}
-                {/*    style={{marginTop: 12}}>*/}
-                {/*    <Image source={Images.trash} style={styles.trashimg} />*/}
-                {/*  </Pressable>*/}
-                {/*</View>*/}
                 <Pressable onPress={() => setModalVisible(true)}>
                   <Image
                     source={Images.menubtn}
                     style={{height: 30, width: 30}}
                   />
                 </Pressable>
-              </View>
-            </Pressable>
+              </Pressable>
+            </View>
           )}
         />
       </View>
@@ -201,31 +188,35 @@ export const HomeScreen: React.FC = () => {
             position: 'absolute',
             width: '100%',
             backgroundColor: color.gray1,
-            elevation: 24,
             borderWidth: 1,
-            borderColor: color.green,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderColor: color.blue,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
           }}>
-          <TouchableOpacity
-            onPress={() => setModalVisible(false)}
+          <View
             style={{
-              alignItems: 'flex-end',
               justifyContent: 'center',
-              top: -4,
-              marginRight: 6,
+              alignItems: 'flex-end',
+              top: -6,
+              marginRight: 10,
             }}>
-            <Image source={Images.cancel} style={{height: 24, width: 24}} />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Image source={Images.cancel} style={{height: 24, width: 24}} />
+            </TouchableOpacity>
+          </View>
           <View
             style={{
               alignItems: 'center',
               // marginHorizontal: 34,
               paddingVertical: 16,
             }}>
-            {bttonsArray.map((value, index) => {
+            {buttonsArray.map((value, index) => {
               return (
-                <Pressable key={value.name}>
+                <Pressable
+                  onPress={() => {
+                    value.onPress(value.name);
+                  }}
+                  key={value.name}>
                   <Text
                     style={{
                       color: color.black,
@@ -252,7 +243,7 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     flexDirection: 'row',
-    borderBottomColor: 'gray',
+    borderBottomColor: color.gray1,
     borderBottomWidth: 1,
     alignItems: 'center',
     marginTop: 12,

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,8 @@ import {color} from '../style/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {InputLogin} from '../component/InputLogin.tsx';
 import {replace, Routes} from '../navigation/AppNavigator.tsx';
+import {Images} from '../assets/images.ts';
+import {LoginScreenLogo} from '../component/LoginScreenLogo.tsx';
 
 export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -95,10 +98,11 @@ export const LoginScreen: React.FC = () => {
         justifyContent: 'center',
       }}>
       <ScrollView>
+        <LoginScreenLogo />
         <View
           style={{
             justifyContent: 'center',
-            marginTop: 120,
+            marginTop: 40,
           }}>
           <View style={{alignItems: 'center'}}>
             <Text style={{color: color.black, fontSize: 26, fontWeight: '600'}}>
@@ -136,7 +140,7 @@ export const LoginScreen: React.FC = () => {
             style={{
               marginTop: 30,
               marginBottom: 20,
-              backgroundColor: color.green,
+              backgroundColor: color.blue,
               paddingVertical: 6,
               borderRadius: 12,
               marginHorizontal: 40,

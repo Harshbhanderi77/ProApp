@@ -3,7 +3,6 @@ import {
   View,
   TextInput,
   Button,
-  FlatList,
   Text,
   Image,
   StyleSheet,
@@ -20,8 +19,6 @@ import {StackParamsList} from '../navigation/AppNavigator.tsx';
 interface Category {
   id: string;
   name: string;
-  number: string;
-  details: string;
   image: string | null;
 }
 
@@ -56,8 +53,6 @@ export const CategoryScreen: React.FC = () => {
     const newCategoryObject: Category = {
       id,
       name: newCategory,
-      number: newCategoryNumber,
-      details: newCategoryDetails,
       image: newCategoryImageUrl,
     };
     const updatedCategories = [...categories, newCategoryObject];
@@ -94,8 +89,6 @@ export const CategoryScreen: React.FC = () => {
 
   const startEditing = (category: Category) => {
     setNewCategory(category.name);
-    setNewCategoryNumber(category.number);
-    setNewCategoryDetails(category.details);
     setNewCategoryImageUrl(category.image);
     setIsEditing(true);
     setCurrentCategory(category);
@@ -119,8 +112,6 @@ export const CategoryScreen: React.FC = () => {
     setIsEditing(false);
     setCurrentCategory(null);
     setNewCategory('');
-    setNewCategoryNumber('');
-    setNewCategoryDetails('');
     setNewCategoryImageUrl(null);
   };
 
@@ -128,8 +119,14 @@ export const CategoryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <CustomHeader label={'Category'} />
+      <CustomHeader label={'Edit'} />
       <View style={{marginHorizontal: 12}}>
+        <View style={styles.imagePickerContainer}>
+          <Button title="Select Image" onPress={selectImage} />
+          {newCategoryImageUrl && (
+            <Image source={{uri: newCategoryImageUrl}} style={styles.image} />
+          )}
+        </View>
         <TextInput
           placeholder="Category Name"
           placeholderTextColor="#8c8c8c"
@@ -137,27 +134,6 @@ export const CategoryScreen: React.FC = () => {
           onChangeText={setNewCategory}
           style={styles.input}
         />
-        <TextInput
-          placeholder="Category Number"
-          placeholderTextColor="#8c8c8c"
-          keyboardType="number-pad"
-          value={newCategoryNumber}
-          onChangeText={setNewCategoryNumber}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Category Details"
-          placeholderTextColor="#8c8c8c"
-          value={newCategoryDetails}
-          onChangeText={setNewCategoryDetails}
-          style={styles.input}
-        />
-        <View style={styles.imagePickerContainer}>
-          <Button title="Select Image" onPress={selectImage} />
-          {newCategoryImageUrl && (
-            <Image source={{uri: newCategoryImageUrl}} style={styles.image} />
-          )}
-        </View>
         <View style={styles.buttonContainer}>
           <Button
             title={isEditing ? 'Update Category' : 'Add Category'}
@@ -171,8 +147,6 @@ export const CategoryScreen: React.FC = () => {
           )}
           <View style={styles.categoryDetails}>
             <Text style={styles.categoryText}>{item?.name}</Text>
-            <Text style={styles.categoryText}>{item?.number}</Text>
-            <Text style={styles.categoryText}>{item?.details}</Text>
           </View>
           <View style={styles.btncontaner}>
             <Pressable onPress={() => startEditing(item)}>
@@ -211,7 +185,9 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-    marginLeft: 12,
+    // marginLeft: 12,
+    borderRadius: 60,
+    justifyContent: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',

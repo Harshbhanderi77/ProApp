@@ -33,7 +33,9 @@ export const Splashscreen: React.FC = () => {
         justifyContent: 'center',
         flex: 1,
       }}>
-      <Text style={{color: color.black}}>Wellcome</Text>
+      <Text style={{color: color.black, fontSize: 22, fontWeight: '600'}}>
+        Wellcome
+      </Text>
     </View>
   );
 };

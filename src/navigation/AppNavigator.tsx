@@ -6,11 +6,12 @@ import {
   NavigationContainer,
   StackActions,
 } from '@react-navigation/native';
-import { Category, HomeScreen } from "../screen/HomeScreen.tsx";
+import {Category, HomeScreen} from '../screen/HomeScreen.tsx';
 import {ProductScreen} from '../screen/ProductScreen .tsx';
 import {LoginScreen} from '../screen/LoginScreen.tsx';
 import {Splashscreen} from '../screen/SplashScreen.tsx';
 import {CategoryScreen} from '../screen/CategoryScreen.tsx';
+import {EditProduct} from '../screen/EditProduct.tsx';
 
 export type StackParamsList = {
   Splashscreen: undefined;
@@ -23,6 +24,7 @@ export type StackParamsList = {
     categoryId: string;
     categoryName: string;
   };
+  EditProduct: undefined;
 };
 
 const navigationRef = createNavigationContainerRef<StackParamsList>();
@@ -35,6 +37,7 @@ export enum Routes {
   Login = 'LoginScreen',
   Category = 'CategoryScreen',
   Product = 'ProductScreen',
+  EditProduct = 'EditProduct',
 }
 
 interface NavigationProps {
@@ -86,6 +89,7 @@ export const AppNavigator: React.FC = () => {
         <RootStack.Screen name="HomeScreen" component={HomeScreen} />
         <RootStack.Screen name={Routes.Category} component={CategoryScreen} />
         <RootStack.Screen name="ProductScreen" component={ProductScreen} />
+        <RootStack.Screen name="EditProduct" component={EditProduct} />
       </RootStack.Navigator>
     </NavigationContainer>
   );

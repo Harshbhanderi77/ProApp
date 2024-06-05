@@ -21,7 +21,7 @@ export const MainHeader: React.FC = () => {
           padding: 2,
           borderRadius: 24,
           elevation: 12,
-          borderColor: color.green,
+          // borderColor: color.green,
           borderWidth: 1,
         }}>
         <Image
