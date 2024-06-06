@@ -27,8 +27,6 @@ export const CategoryScreen: React.FC = () => {
   const {item} = routes.params;
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState('');
-  const [newCategoryNumber, setNewCategoryNumber] = useState('');
-  const [newCategoryDetails, setNewCategoryDetails] = useState('');
   const [newCategoryImageUrl, setNewCategoryImageUrl] = useState<string | null>(
     null,
   );
@@ -70,8 +68,6 @@ export const CategoryScreen: React.FC = () => {
         ? {
             ...cat,
             name: newCategory,
-            number: newCategoryNumber,
-            details: newCategoryDetails,
             image: newCategoryImageUrl,
           }
         : cat,
@@ -87,12 +83,12 @@ export const CategoryScreen: React.FC = () => {
     await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
   };
 
-  const startEditing = (category: Category) => {
-    setNewCategory(category.name);
-    setNewCategoryImageUrl(category.image);
-    setIsEditing(true);
-    setCurrentCategory(category);
-  };
+  // const startEditing = (category: Category) => {
+  //   setNewCategory(category.name);
+  //   setNewCategoryImageUrl(category.image);
+  //   setIsEditing(true);
+  //   setCurrentCategory(category);
+  // };
 
   const selectImage = async () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
@@ -117,12 +113,22 @@ export const CategoryScreen: React.FC = () => {
 
   console.log(item);
 
+  useEffect(() => {
+    startEditing(item);
+  }, [item]);
+
+  const startEditing = (category: Category) => {
+    setNewCategory(category.name);
+    setNewCategoryImageUrl(category.image);
+    setIsEditing(true);
+    setCurrentCategory(category);
+  };
+
   return (
     <View style={styles.container}>
-      <CustomHeader label={'Edit'} />
+      <CustomHeader label={'Edit Category'} />
       <View style={{marginHorizontal: 12}}>
         <View style={styles.imagePickerContainer}>
-          <Button title="Select Image" onPress={selectImage} />
           {newCategoryImageUrl && (
             <Image source={{uri: newCategoryImageUrl}} style={styles.image} />
           )}
@@ -140,6 +146,7 @@ export const CategoryScreen: React.FC = () => {
             onPress={isEditing ? updateCategory : addCategory}
           />
           {isEditing && <Button title="Cancel" onPress={resetFields} />}
+          <Button title="Select Image" onPress={selectImage} />
         </View>
         <View style={styles.categoryItem}>
           {item?.image && (
@@ -178,7 +185,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   imagePickerContainer: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },

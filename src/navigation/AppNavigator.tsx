@@ -7,7 +7,7 @@ import {
   StackActions,
 } from '@react-navigation/native';
 import {Category, HomeScreen} from '../screen/HomeScreen.tsx';
-import {ProductScreen} from '../screen/ProductScreen .tsx';
+import {Product, ProductScreen} from '../screen/ProductScreen .tsx';
 import {LoginScreen} from '../screen/LoginScreen.tsx';
 import {Splashscreen} from '../screen/SplashScreen.tsx';
 import {CategoryScreen} from '../screen/CategoryScreen.tsx';
@@ -24,7 +24,7 @@ export type StackParamsList = {
     categoryId: string;
     categoryName: string;
   };
-  EditProduct: undefined;
+  EditProduct: {item: Product};
 };
 
 const navigationRef = createNavigationContainerRef<StackParamsList>();

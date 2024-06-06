@@ -48,42 +48,19 @@ const predefinedCategories: Category[] = [
     name: 'Category 5',
     image: 'https://via.placeholder.com/60',
   },
-  // {
-  //   id: '6',
-  //   name: 'Category 6',
-  //   image: 'https://via.placeholder.com/60',
-  // },
-  // {
-  //   id: '7',
-  //   name: 'Category 7',
-  //   image: 'https://via.placeholder.com/60',
-  // },
-  // {
-  //   id: '8',
-  //   name: 'Category 8',
-  //   image: 'https://via.placeholder.com/60',
-  // },
-  // {
-  //   id: '9',
-  //   name: 'Category 9',
-  //   image: 'https://via.placeholder.com/60',
-  // },
-  // {
-  //   id: '10',
-  //   name: 'Category 10',
-  //   image: 'https://via.placeholder.com/60',
-  // },
 ];
 
 export const HomeScreen: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [modelVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
 
   const buttonsArray = [
     {
       name: 'Add Product',
-      onPress: (item: string) => {
-        console.log('eoreuioaos');
+      onPress: (item: Category) => {
         navigate({
           screenName: Routes.Category,
           params: {
@@ -94,7 +71,7 @@ export const HomeScreen: React.FC = () => {
     },
     {
       name: 'Edit',
-      onPress: (item: string) => {
+      onPress: (item: Category) => {
         navigate({
           screenName: Routes.Category,
           params: {item: item},
@@ -103,7 +80,9 @@ export const HomeScreen: React.FC = () => {
     },
     {
       name: 'Delete',
-      onPress: (item: string) => {},
+      onPress: (item: Category) => {
+        deleteCategory(item.id);
+      },
     },
   ];
 
@@ -136,7 +115,17 @@ export const HomeScreen: React.FC = () => {
     await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
   };
 
-  const editCategory = (item: Category) => {};
+  const handleMenuPress = (item: Category) => {
+    setSelectedCategory(item);
+    setModalVisible(true);
+  };
+
+  const handleButtonPress = (action: (item: Category) => void) => {
+    if (selectedCategory) {
+      action(selectedCategory);
+      setModalVisible(false);
+    }
+  };
 
   return (
     <View style={styles.maincontainer}>
@@ -145,7 +134,6 @@ export const HomeScreen: React.FC = () => {
         <FlatList
           data={categories}
           keyExtractor={item => item.id}
-          scrollEnabled={true}
           renderItem={({item}) => (
             <View>
               <Pressable
@@ -165,7 +153,7 @@ export const HomeScreen: React.FC = () => {
                 <View style={styles.categoryDetails}>
                   <Text style={styles.categoryText}>{item.name}</Text>
                 </View>
-                <Pressable onPress={() => setModalVisible(true)}>
+                <Pressable onPress={() => handleMenuPress(item)}>
                   <Image
                     source={Images.menubtn}
                     style={{height: 30, width: 30}}
@@ -179,56 +167,22 @@ export const HomeScreen: React.FC = () => {
       <Modal
         transparent={true}
         animationType={'slide'}
-        visible={modelVisible}
+        visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            bottom: 0,
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: color.gray1,
-            borderWidth: 1,
-            borderColor: color.blue,
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-          }}>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              top: -6,
-              marginRight: 10,
-            }}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Image source={Images.cancel} style={{height: 24, width: 24}} />
+              <Image source={Images.cancel} style={styles.modalCloseIcon} />
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              alignItems: 'center',
-              // marginHorizontal: 34,
-              paddingVertical: 16,
-            }}>
-            {buttonsArray.map((value, index) => {
-              return (
-                <Pressable
-                  onPress={() => {
-                    value.onPress(value.name);
-                  }}
-                  key={value.name}>
-                  <Text
-                    style={{
-                      color: color.black,
-                      fontWeight: '600',
-                      fontSize: 22,
-                      marginTop: 10,
-                    }}>
-                    {value.name}
-                  </Text>
-                </Pressable>
-              );
-            })}
+          <View style={styles.modalContent}>
+            {buttonsArray.map(button => (
+              <Pressable
+                onPress={() => handleButtonPress(button.onPress)}
+                key={button.name}>
+                <Text style={styles.modalButtonText}>{button.name}</Text>
+              </Pressable>
+            ))}
           </View>
         </View>
       </Modal>
@@ -261,17 +215,35 @@ const styles = StyleSheet.create({
     color: color.black,
     marginBottom: 5,
   },
-  btncontaner: {
-    alignItems: 'center',
+  modalContainer: {
+    flex: 1,
+    bottom: 0,
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: color.gray1,
+    borderWidth: 1,
+    borderColor: color.blue,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+  modalHeader: {
     justifyContent: 'center',
+    alignItems: 'flex-end',
+    top: -6,
+    marginRight: 10,
   },
-  editbtn: {
-    color: color.black,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  trashimg: {
+  modalCloseIcon: {
     height: 24,
     width: 24,
+  },
+  modalContent: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  modalButtonText: {
+    color: color.black,
+    fontWeight: '600',
+    fontSize: 22,
+    marginTop: 10,
   },
 });
