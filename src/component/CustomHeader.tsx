@@ -14,24 +14,8 @@ export const CustomHeader: React.FC<CartheaderProps> = ({label}) => {
       <Pressable onPress={() => goBack()} style={styles.backButton}>
         <Image source={Images.backbtn} style={styles.backButtonImage} />
       </Pressable>
-      <Text style={styles.headerText}>{label}</Text>
-      <View
-        style={{
-          backgroundColor: color.black,
-          padding: 2,
-          borderRadius: 24,
-          elevation: 12,
-          // borderColor: color.green,
-          borderWidth: 1,
-        }}>
-        <Image
-          source={Images.appicon}
-          style={{
-            width: 34,
-            height: 34,
-            resizeMode: 'contain',
-          }}
-        />
+      <View style={styles.textview}>
+        <Text style={styles.headerText}>{label}</Text>
       </View>
     </View>
   );
@@ -40,9 +24,7 @@ export const CustomHeader: React.FC<CartheaderProps> = ({label}) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    // backgroundColor: color.gray1,
     margin: 8,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -56,6 +38,11 @@ const styles = StyleSheet.create({
   backButtonImage: {
     width: 24,
     height: 24,
+  },
+  textview: {
+    position: 'absolute',
+    alignItems: 'center',
+    width: '100%',
   },
   headerText: {
     color: color.black,

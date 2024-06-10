@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,7 +11,6 @@ import {color} from '../style/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {InputLogin} from '../component/InputLogin.tsx';
 import {replace, Routes} from '../navigation/AppNavigator.tsx';
-import {Images} from '../assets/images.ts';
 import {LoginScreenLogo} from '../component/LoginScreenLogo.tsx';
 
 export const LoginScreen: React.FC = () => {
@@ -35,7 +33,6 @@ export const LoginScreen: React.FC = () => {
       errorText: emailError,
       keyboardType: 'email-address',
       autoCapitalize: 'none',
-      // value: email,
     },
     {
       key: 2,
@@ -91,19 +88,10 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: color.white,
-        flex: 1,
-        justifyContent: 'center',
-      }}>
+    <View style={styles.mainview}>
       <ScrollView>
         <LoginScreenLogo />
-        <View
-          style={{
-            justifyContent: 'center',
-            marginTop: 40,
-          }}>
+        <View style={styles.secondview}>
           <View style={{alignItems: 'center'}}>
             <Text style={{color: color.black, fontSize: 26, fontWeight: '600'}}>
               Login
@@ -123,11 +111,7 @@ export const LoginScreen: React.FC = () => {
           ))}
           <TouchableOpacity
             onPress={togglePasswordVisibility}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              marginHorizontal: 40,
-            }}>
+            style={styles.password}>
             <Text
               style={{
                 color: color.black,
@@ -135,21 +119,8 @@ export const LoginScreen: React.FC = () => {
               {showPassword ? 'Hide Password' : 'Show Password'}
             </Text>
           </TouchableOpacity>
-          <Pressable
-            onPress={handleLoginPress}
-            style={{
-              marginTop: 30,
-              marginBottom: 20,
-              backgroundColor: color.blue,
-              paddingVertical: 6,
-              borderRadius: 12,
-              marginHorizontal: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={{color: color.black, fontSize: 20, fontWeight: '600'}}>
-              Login
-            </Text>
+          <Pressable onPress={handleLoginPress} style={styles.loginbtn}>
+            <Text style={styles.loginbtntext}>Login</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -157,4 +128,34 @@ export const LoginScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  mainview: {
+    backgroundColor: color.white,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  secondview: {
+    justifyContent: 'center',
+    marginTop: 40,
+  },
+  password: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginHorizontal: 40,
+  },
+  loginbtn: {
+    marginTop: 30,
+    marginBottom: 20,
+    backgroundColor: color.blue,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginHorizontal: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginbtntext: {
+    color: color.black,
+    fontSize: 20,
+    fontWeight: '600',
+  },
+});

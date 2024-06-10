@@ -12,6 +12,7 @@ import {LoginScreen} from '../screen/LoginScreen.tsx';
 import {Splashscreen} from '../screen/SplashScreen.tsx';
 import {CategoryScreen} from '../screen/CategoryScreen.tsx';
 import {EditProduct} from '../screen/EditProduct.tsx';
+import {AddCategoryScreen} from '../screen/AddCategoryScreen.tsx';
 
 export type StackParamsList = {
   Splashscreen: undefined;
@@ -25,6 +26,9 @@ export type StackParamsList = {
     categoryName: string;
   };
   EditProduct: {item: Product};
+  AddCategoryScreen: {
+    item: {};
+  };
 };
 
 const navigationRef = createNavigationContainerRef<StackParamsList>();
@@ -38,6 +42,7 @@ export enum Routes {
   Category = 'CategoryScreen',
   Product = 'ProductScreen',
   EditProduct = 'EditProduct',
+  AddCategory = 'AddCategoryScreen',
 }
 
 interface NavigationProps {
@@ -90,6 +95,10 @@ export const AppNavigator: React.FC = () => {
         <RootStack.Screen name={Routes.Category} component={CategoryScreen} />
         <RootStack.Screen name="ProductScreen" component={ProductScreen} />
         <RootStack.Screen name="EditProduct" component={EditProduct} />
+        <RootStack.Screen
+          name="AddCategoryScreen"
+          component={AddCategoryScreen}
+        />
       </RootStack.Navigator>
     </NavigationContainer>
   );

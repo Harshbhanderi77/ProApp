@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {color} from '../style/color';
@@ -110,16 +111,17 @@ const predefinedProducts: Product[] = [
 export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
   const {categoryId} = route.params;
   const [products, setProducts] = useState<Product[]>([]);
-  const [modelVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const buttonsArray = [
     {
       name: 'Add Product',
-      onPress: () => {
+      onPress: (item: Product) => {
         navigate({
           screenName: Routes.EditProduct,
+          params: {item: item},
         });
       },
     },
@@ -183,21 +185,43 @@ export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
     await saveProducts(updatedProducts);
   };
 
+  const refreshProducts = async () => {
+    setRefreshing(true);
+    const storedProducts = await AsyncStorage.getItem('products');
+    if (storedProducts) {
+      const parsedProducts: Product[] = JSON.parse(storedProducts);
+      setProducts(
+        parsedProducts.filter(product => product.categoryId === categoryId),
+      );
+    } else {
+      setProducts(
+        predefinedProducts.filter(product => product.categoryId === categoryId),
+      );
+      await AsyncStorage.setItem(
+        'products',
+        JSON.stringify(predefinedProducts),
+      );
+    }
+    setRefreshing(false);
+  };
+
   const renderItem = ({item}: {item: Product}) => (
-    <View>
+    <View style={{marginHorizontal: 12}}>
       <View style={styles.categoryItem}>
         <Image source={{uri: item.image}} style={styles.categoryImage} />
         <View style={styles.categoryDetails}>
           <Text style={styles.categoryText}>{item.name}</Text>
           <Text style={styles.categoryText}>$ {item.price}</Text>
         </View>
-        <Pressable
-          onPress={() => {
-            setSelectedProduct(item);
-            setModalVisible(true);
-          }}>
-          <Image source={Images.menubtn} style={{height: 30, width: 30}} />
-        </Pressable>
+        <View style={styles.menuButtonContainer}>
+          <Pressable
+            onPress={() => {
+              setSelectedProduct(item);
+              setModalVisible(true);
+            }}>
+            <Image source={Images.menubtn} style={styles.menuButton} />
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -209,54 +233,28 @@ export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
         data={products}
         keyExtractor={item => item.id}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refreshProducts} />
+        }
       />
       <Modal
         transparent={true}
         animationType={'slide'}
-        visible={modelVisible}
+        visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            bottom: 0,
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: color.gray1,
-            borderWidth: 1,
-            borderColor: color.blue,
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-          }}>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              top: -6,
-              marginRight: 10,
-            }}>
+        <View style={styles.modelview}>
+          <View style={styles.btnview}>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Image source={Images.cancel} style={{height: 24, width: 24}} />
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              alignItems: 'center',
-              paddingVertical: 16,
-            }}>
+          <View style={styles.btnarrayview}>
             {buttonsArray.map(value => {
               return (
                 <Pressable
                   key={value.name}
                   onPress={() => value.onPress(selectedProduct!)}>
-                  <Text
-                    style={{
-                      color: color.black,
-                      fontWeight: '600',
-                      fontSize: 22,
-                      marginTop: 10,
-                    }}>
-                    {value.name}
-                  </Text>
+                  <Text style={styles.arraybtn}>{value.name}</Text>
                 </Pressable>
               );
             })}
@@ -274,16 +272,28 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     flexDirection: 'row',
-    borderBottomColor: color.gray1,
-    borderBottomWidth: 1,
+    borderColor: color.blue,
+    borderRadius: 12,
+    borderWidth: 1,
     alignItems: 'center',
-    marginTop: 12,
-    marginHorizontal: 12,
+    marginTop: 16,
+    padding: 6,
+    // Add shadow for iOS
+    shadowColor: color.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    // Add elevation for Android
+    elevation: 5,
+    backgroundColor: color.white,
   },
   categoryImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 100,
     marginRight: 10,
   },
   categoryDetails: {
@@ -292,6 +302,15 @@ const styles = StyleSheet.create({
   categoryText: {
     color: color.black,
     marginBottom: 5,
+  },
+  menuButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  menuButton: {
+    height: 30,
+    width: 30,
   },
   header: {
     fontSize: 20,
@@ -329,160 +348,31 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
   },
+  modelview: {
+    flex: 1,
+    bottom: 0,
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: color.gray1,
+    borderWidth: 1,
+    borderColor: color.blue,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+  btnview: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    top: -6,
+    marginRight: 10,
+  },
+  btnarrayview: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  arraybtn: {
+    color: color.black,
+    fontWeight: '600',
+    fontSize: 22,
+    marginTop: 10,
+  },
 });
-
-// import React, {useEffect, useState} from 'react';
-// import {
-//   FlatList,
-//   Image,
-//   Modal,
-//   Pressable,
-//   StyleSheet,
-//   Text,
-//   TouchableOpacity,
-//   View,
-//   RefreshControl,
-// } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import {color} from '../style/color';
-// import {Images} from '../assets/images.ts';
-// import {CustomHeader} from '../component/CustomHeader.tsx';
-// import {navigate, Routes} from '../navigation/AppNavigator.tsx';
-//
-// interface ProductScreenProps {
-//   route: any;
-// }
-//
-// export interface Product {
-//   id: string;
-//   categoryId: string;
-//   image: string;
-//   name: string;
-//   price: string;
-// }
-//
-// const predefinedProducts: Product[] = [
-//   {
-//     id: '1',
-//     categoryId: '1',
-//     image: 'https://via.placeholder.com/60',
-//     name: 'Bajrano - Rotlo',
-//     price: '50.00',
-//   },
-//   // Other predefined products...
-// ];
-//
-// export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
-//   const {categoryId} = route.params;
-//   const [products, setProducts] = useState<Product[]>([]);
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-//   const [refreshing, setRefreshing] = useState(false);
-//
-//   useEffect(() => {
-//     refreshProducts();
-//   }, [categoryId]);
-//
-//   const refreshProducts = async () => {
-//     setRefreshing(true);
-//     try {
-//       const storedProducts = await AsyncStorage.getItem('products');
-//       if (storedProducts) {
-//         const parsedProducts: Product[] = JSON.parse(storedProducts);
-//         setProducts(
-//           parsedProducts.filter(product => product.categoryId === categoryId),
-//         );
-//       } else {
-//         setProducts(
-//           predefinedProducts.filter(
-//             product => product.categoryId === categoryId,
-//           ),
-//         );
-//         await AsyncStorage.setItem(
-//           'products',
-//           JSON.stringify(predefinedProducts),
-//         );
-//       }
-//     } catch (error) {
-//       console.error('Error loading products:', error);
-//     } finally {
-//       setRefreshing(false);
-//     }
-//   };
-//
-//   const deleteProduct = async (id: string) => {
-//     try {
-//       const updatedProducts = products.filter(product => product.id !== id);
-//       setProducts(updatedProducts);
-//       await AsyncStorage.setItem('products', JSON.stringify(updatedProducts));
-//     } catch (error) {
-//       console.error('Error deleting product:', error);
-//     }
-//   };
-//
-//   const renderItem = ({item}: {item: Product}) => (
-//     <View style={styles.categoryItem}>
-//       <Image source={{uri: item.image}} style={styles.categoryImage} />
-//       <View style={styles.categoryDetails}>
-//         <Text style={styles.categoryText}>{item.name}</Text>
-//         <Text style={styles.categoryText}>$ {item.price}</Text>
-//       </View>
-//       <Pressable
-//         onPress={() => {
-//           setSelectedProduct(item);
-//           setModalVisible(true);
-//         }}>
-//         <Image source={Images.menubtn} style={{height: 30, width: 30}} />
-//       </Pressable>
-//     </View>
-//   );
-//
-//   return (
-//     <View style={styles.container}>
-//       <CustomHeader label={'Product'} />
-//       <FlatList
-//         data={products}
-//         keyExtractor={item => item.id}
-//         renderItem={renderItem}
-//         refreshControl={
-//           <RefreshControl refreshing={refreshing} onRefresh={refreshProducts} />
-//         }
-//       />
-//       <Modal
-//         transparent={true}
-//         animationType={'slide'}
-//         visible={modalVisible}
-//         onRequestClose={() => setModalVisible(false)}>
-//         {/* Modal content */}
-//       </Modal>
-//     </View>
-//   );
-// };
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: color.white,
-//   },
-//   categoryItem: {
-//     flexDirection: 'row',
-//     borderBottomColor: color.gray1,
-//     borderBottomWidth: 1,
-//     alignItems: 'center',
-//     marginTop: 12,
-//     marginHorizontal: 12,
-//   },
-//   categoryImage: {
-//     width: 60,
-//     height: 60,
-//     borderRadius: 30,
-//     marginRight: 10,
-//   },
-//   categoryDetails: {
-//     flex: 1,
-//   },
-//   categoryText: {
-//     color: color.black,
-//     marginBottom: 5,
-//   },
-// });

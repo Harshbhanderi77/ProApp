@@ -5,4 +5,6 @@ export const Images = {
   logout: require('./logout.png'),
   menubtn: require('./menubtn.png'),
   cancel: require('./cancel.png'),
+  cameraicon: require('./cameraicon.png'),
+  addimage: require('./addimage.png'),
 };

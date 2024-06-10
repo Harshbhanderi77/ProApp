@@ -1,65 +1,206 @@
-import React from 'react';
-import {Image, Pressable, Text, View} from 'react-native';
-import {color} from '../style/color.ts';
-import {Images} from '../assets/images.ts';
+// import React, {useState} from 'react';
+// import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+// import {color} from '../style/color';
+// import {Images} from '../assets/images';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import {replace, Routes, navigate} from '../navigation/AppNavigator';
+// import {Category} from '../screen/HomeScreen.tsx';
+//
+// export const MainHeader: React.FC = () => {
+//   const [menuVisible, setMenuVisible] = useState(false);
+//
+//   const handleAddCategory = (item: Category) => {
+//     setMenuVisible(false);
+//     navigate({
+//       screenName: Routes.Category,
+//       params: {
+//         item: item,
+//       },
+//     });
+//   };
+//
+//   return (
+//     <View style={styles.mainview}>
+//       <Pressable
+//         style={styles.logoutButton}
+//         onPress={async () => {
+//           await AsyncStorage.setItem('login', 'false');
+//           replace({screenName: Routes.Login});
+//         }}>
+//         <Image source={Images.logout} style={styles.logoutIcon} />
+//       </Pressable>
+//       <Text style={styles.text}>Home</Text>
+//       <View style={styles.secondview}>
+//         <Pressable onPress={() => setMenuVisible(!menuVisible)}>
+//           <Image source={Images.menubtn} style={styles.appiconimg} />
+//         </Pressable>
+//         {menuVisible && (
+//           <View style={styles.menu}>
+//             <Pressable onPress={handleAddCategory} style={styles.menuItem}>
+//               <Text style={styles.menuItemText}>Add Category</Text>
+//             </Pressable>
+//           </View>
+//         )}
+//       </View>
+//     </View>
+//   );
+// };
+//
+// const styles = StyleSheet.create({
+//   mainview: {
+//     backgroundColor: color.white,
+//     justifyContent: 'space-between',
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     padding: 10,
+//     zIndex: 10,
+//   },
+//   logoutButton: {
+//     backgroundColor: color.blue,
+//     padding: 8,
+//     borderRadius: 24,
+//     elevation: 12,
+//   },
+//   logoutIcon: {
+//     width: 24,
+//     height: 24,
+//   },
+//   secondview: {
+//     position: 'relative',
+//     zIndex: 15,
+//   },
+//   appiconimg: {
+//     width: 30,
+//     height: 30,
+//     resizeMode: 'contain',
+//   },
+//   text: {
+//     color: color.black,
+//     fontSize: 20,
+//     fontWeight: '700',
+//   },
+//   menu: {
+//     position: 'absolute',
+//     top: 40,
+//     right: -8,
+//     backgroundColor: color.white,
+//     borderRadius: 5,
+//     elevation: 5,
+//     shadowColor: color.black,
+//     shadowOffset: {width: 0, height: 2},
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     zIndex: 100,
+//     width: 150,
+//   },
+//   menuItem: {
+//     padding: 16,
+//   },
+//   menuItemText: {
+//     color: color.black,
+//     fontSize: 16,
+//   },
+// });
+
+
+
+import React, {useState} from 'react';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {color} from '../style/color';
+import {Images} from '../assets/images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {replace, Routes} from '../navigation/AppNavigator.tsx';
+import {replace, Routes, navigate} from '../navigation/AppNavigator';
 
 export const MainHeader: React.FC = () => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const handleAddCategory = () => {
+    setMenuVisible(false);
+    navigate({
+      screenName: Routes.AddCategory,
+      params: {item: {}},
+    });
+  };
+
   return (
-    <View
-      style={{
-        backgroundColor: color.white,
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        alignItems: 'center',
-        margin: 10,
-      }}>
-      <View
-        style={{
-          backgroundColor: color.black,
-          padding: 2,
-          borderRadius: 24,
-          elevation: 12,
-          // borderColor: color.green,
-          borderWidth: 1,
-        }}>
-        <Image
-          source={Images.appicon}
-          style={{
-            width: 34,
-            height: 34,
-            resizeMode: 'contain',
-          }}
-        />
-      </View>
-      <Text
-        style={{
-          color: color.black,
-          fontSize: 20,
-          fontWeight: '700',
-        }}>
-        Home
-      </Text>
+    <View style={styles.mainview}>
       <Pressable
-        style={{
-          backgroundColor: color.blue,
-          padding: 8,
-          borderRadius: 24,
-          elevation: 12,
-        }}
+        style={styles.logoutButton}
         onPress={async () => {
           await AsyncStorage.setItem('login', 'false');
           replace({screenName: Routes.Login});
         }}>
-        <Image
-          source={Images.logout}
-          style={{
-            width: 24,
-            height: 24,
-          }}
-        />
+        <Image source={Images.logout} style={styles.logoutIcon} />
       </Pressable>
+      <Text style={styles.text}>Home</Text>
+      <View style={styles.secondview}>
+        <Pressable onPress={() => setMenuVisible(!menuVisible)}>
+          <Image source={Images.menubtn} style={styles.appiconimg} />
+        </Pressable>
+        {menuVisible && (
+          <View style={styles.menu}>
+            <Pressable onPress={handleAddCategory} style={styles.menuItem}>
+              <Text style={styles.menuItemText}>Add Category</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  mainview: {
+    backgroundColor: color.white,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    zIndex: 10,
+  },
+  logoutButton: {
+    backgroundColor: color.blue,
+    padding: 8,
+    borderRadius: 24,
+    elevation: 12,
+  },
+  logoutIcon: {
+    width: 24,
+    height: 24,
+  },
+  secondview: {
+    position: 'relative',
+    zIndex: 15,
+  },
+  appiconimg: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+  },
+  text: {
+    color: color.black,
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  menu: {
+    position: 'absolute',
+    top: 40,
+    right: -8,
+    backgroundColor: color.white,
+    borderRadius: 5,
+    elevation: 5,
+    shadowColor: color.black,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    zIndex: 100,
+    width: 150,
+  },
+  menuItem: {
+    padding: 16,
+  },
+  menuItemText: {
+    color: color.black,
+    fontSize: 16,
+  },
+});

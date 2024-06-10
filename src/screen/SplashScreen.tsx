@@ -26,18 +26,22 @@ export const Splashscreen: React.FC = () => {
   }, []);
 
   return (
-    <View
-      style={{
-        backgroundColor: color.white,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-      }}>
-      <Text style={{color: color.black, fontSize: 22, fontWeight: '600'}}>
-        Wellcome
-      </Text>
+    <View style={styles.mainview}>
+      <Text style={styles.text}>Wellcome</Text>
     </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  mainview: {
+    backgroundColor: color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  text: {
+    color: color.black,
+    fontSize: 22,
+    fontWeight: '600',
+  },
+});

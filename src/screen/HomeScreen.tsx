@@ -14,7 +14,7 @@ import {color} from '../style/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
 import {Images} from '../assets/images';
-import {MainHeader} from '../component/Mainheader';
+import {MainHeader} from '../component/Mainheader.tsx';
 
 export interface Category {
   id: string;
@@ -56,19 +56,28 @@ export const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const storedCategories = await AsyncStorage.getItem('categories');
+      if (storedCategories) {
+        setCategories(JSON.parse(storedCategories));
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const buttonsArray = [
-    {
-      name: 'Add Product',
-      onPress: (item: Category) => {
-        navigate({
-          screenName: Routes.Category,
-          params: {
-            item: item,
-          },
-        });
-      },
-    },
+    // {
+    //   name: 'Add Product',
+    //   onPress: (item: Category) => {
+    //     navigate({
+    //       screenName: Routes.Category,
+    //       params: {
+    //         item: item,
+    //       },
+    //     });
+    //   },
+    // },
     {
       name: 'Edit',
       onPress: (item: Category) => {
@@ -130,10 +139,10 @@ export const HomeScreen: React.FC = () => {
   return (
     <View style={styles.maincontainer}>
       <MainHeader />
-      <View style={{marginHorizontal: 12}}>
+      <View style={{marginHorizontal: 12, flex: 1}}>
         <FlatList
           data={categories}
-          keyExtractor={item => item.id}
+          extraData={categories}
           renderItem={({item}) => (
             <View>
               <Pressable
@@ -153,15 +162,15 @@ export const HomeScreen: React.FC = () => {
                 <View style={styles.categoryDetails}>
                   <Text style={styles.categoryText}>{item.name}</Text>
                 </View>
-                <Pressable onPress={() => handleMenuPress(item)}>
-                  <Image
-                    source={Images.menubtn}
-                    style={{height: 30, width: 30}}
-                  />
-                </Pressable>
+                <View style={styles.menuButtonContainer}>
+                  <Pressable onPress={() => handleMenuPress(item)}>
+                    <Image source={Images.menubtn} style={styles.menuButton} />
+                  </Pressable>
+                </View>
               </Pressable>
             </View>
           )}
+          keyExtractor={item => item.id}
         />
       </View>
       <Modal
@@ -197,23 +206,38 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     flexDirection: 'row',
-    borderBottomColor: color.gray1,
-    borderBottomWidth: 1,
+    borderColor: color.blue,
+    borderRadius: 12,
+    borderWidth: 1,
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 16,
+    padding: 6,
+    elevation: 5,
+    backgroundColor: color.white,
   },
   categoryImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 100,
     marginRight: 10,
   },
   categoryDetails: {
-    flex: 1,
+    // flex: 1,
   },
   categoryText: {
     color: color.black,
     marginBottom: 5,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  menuButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 6,
+  },
+  menuButton: {
+    height: 30,
+    width: 30,
   },
   modalContainer: {
     flex: 1,
@@ -225,6 +249,7 @@ const styles = StyleSheet.create({
     borderColor: color.blue,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    elevation: 5,
   },
   modalHeader: {
     justifyContent: 'center',

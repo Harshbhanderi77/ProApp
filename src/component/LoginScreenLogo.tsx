@@ -5,20 +5,8 @@ import {color} from '../style/color.ts';
 
 export const LoginScreenLogo: React.FC = () => {
   return (
-    <View
-      style={{
-        backgroundColor: color.white,
-        alignItems: 'center',
-        position: 'relative',
-        margin: 60,
-      }}>
-      <View
-        style={{
-          backgroundColor: color.black,
-          padding: 10,
-          borderRadius: 100,
-          elevation: 16,
-        }}>
+    <View style={styles.maincontainer}>
+      <View style={styles.secondview}>
         <View style={{position: 'relative'}}>
           <Image
             source={Images.appicon}
@@ -30,4 +18,17 @@ export const LoginScreenLogo: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  maincontainer: {
+    backgroundColor: color.white,
+    alignItems: 'center',
+    position: 'relative',
+    margin: 60,
+  },
+  secondview: {
+    backgroundColor: color.black,
+    padding: 10,
+    borderRadius: 100,
+    elevation: 16,
+  },
+});

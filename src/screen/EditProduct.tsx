@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
-  Button,
   Text,
   Image,
   StyleSheet,
@@ -13,7 +12,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {color} from '../style/color.ts';
 import {CustomHeader} from '../component/CustomHeader.tsx';
 import {Images} from '../assets/images.ts';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute, useNavigation} from '@react-navigation/native';
 import {StackParamsList} from '../navigation/AppNavigator.tsx';
 
 interface Product {
@@ -26,6 +25,7 @@ interface Product {
 export const EditProduct: React.FC = () => {
   const routes = useRoute<RouteProp<StackParamsList, 'EditProduct'>>();
   const {item} = routes.params;
+  const navigation = useNavigation();
   const [products, setProducts] = useState<Product[]>([]);
   const [newProductName, setNewProductName] = useState('');
   const [newProductImage, setNewProductImage] = useState<string | null>(null);
@@ -58,6 +58,7 @@ export const EditProduct: React.FC = () => {
     setProducts(updatedProducts);
     await AsyncStorage.setItem('products', JSON.stringify(updatedProducts));
     resetFields();
+    navigation.goBack();
   };
 
   const updateProduct = async () => {
@@ -81,12 +82,7 @@ export const EditProduct: React.FC = () => {
     setProducts(updatedProducts);
     await AsyncStorage.setItem('products', JSON.stringify(updatedProducts));
     resetFields();
-  };
-
-  const deleteProduct = async (id: string) => {
-    const updatedProducts = products.filter(prod => prod.id !== id);
-    setProducts(updatedProducts);
-    await AsyncStorage.setItem('products', JSON.stringify(updatedProducts));
+    navigation.goBack();
   };
 
   const selectImage = async () => {
@@ -129,49 +125,45 @@ export const EditProduct: React.FC = () => {
       <View style={{marginHorizontal: 12}}>
         <View style={styles.imagePickerContainer}>
           {newProductImage && (
-            <Image source={{uri: newProductImage}} style={styles.image} />
+            <View>
+              <Image source={{uri: newProductImage}} style={styles.image} />
+              <Pressable style={styles.iconimage} onPress={selectImage}>
+                <Image
+                  source={Images.cameraicon}
+                  style={{width: 20, height: 20}}
+                />
+              </Pressable>
+            </View>
           )}
         </View>
-        <TextInput
-          placeholder="Product Name"
-          placeholderTextColor="#8c8c8c"
-          value={newProductName}
-          onChangeText={setNewProductName}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Product Price"
-          placeholderTextColor="#8c8c8c"
-          value={newProductPrice}
-          onChangeText={setNewProductPrice}
-          style={styles.input}
-        />
-        <View style={styles.buttonContainer}>
-          <Button
-            title={isEditingProduct ? 'Update Product' : 'Add Product'}
-            onPress={isEditingProduct ? updateProduct : addProduct}
+        <View style={styles.textview}>
+          <Text style={styles.imputtitel}>Name:</Text>
+          <TextInput
+            placeholder="Product Name"
+            placeholderTextColor="#8c8c8c"
+            value={newProductName}
+            onChangeText={setNewProductName}
+            style={styles.input}
           />
-          {isEditingProduct && <Button title="Cancel" onPress={resetFields} />}
-          <Button title="Select Image" onPress={selectImage} />
         </View>
-        <View style={styles.productItem}>
-          {item?.image && (
-            <Image source={{uri: item?.image}} style={styles.productImage} />
-          )}
-          <View style={styles.productDetails}>
-            <Text style={styles.productText}>{item?.name}</Text>
-            <Text style={styles.productText}>Price: ${item?.price}</Text>
-          </View>
-          <View style={styles.btncontainer}>
-            <Pressable onPress={() => startEditing(item)}>
-              <Text style={styles.editbtn}>Edit</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => deleteProduct(item.id)}
-              style={{marginTop: 12}}>
-              <Image source={Images.trash} style={styles.trashimg} />
-            </Pressable>
-          </View>
+        <View style={styles.textview}>
+          <Text style={styles.imputtitel}>Price:</Text>
+          <TextInput
+            placeholder="$ 12.00"
+            placeholderTextColor="#8c8c8c"
+            value={newProductPrice}
+            onChangeText={setNewProductPrice}
+            style={styles.input}
+          />
+        </View>
+        <View style={{marginTop: 16}}>
+          <Pressable
+            onPress={isEditingProduct ? updateProduct : addProduct}
+            style={styles.buttonContainer}>
+            <Text style={styles.buttontext}>
+              {isEditingProduct ? 'Update Product' : 'Add Product'}
+            </Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -184,60 +176,58 @@ const styles = StyleSheet.create({
     backgroundColor: color.white,
   },
   input: {
-    height: 40,
     color: color.black,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
     paddingHorizontal: 8,
+    fontSize: 14,
   },
   imagePickerContainer: {
     alignItems: 'center',
     marginBottom: 12,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 60,
     justifyContent: 'center',
+  },
+  iconimage: {
+    position: 'absolute',
+    bottom: 0,
+    right: 10,
+    backgroundColor: color.blue,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textview: {
+    marginTop: 14,
+    borderWidth: 1,
+    position: 'relative',
+    borderRadius: 12,
+    borderColor: color.gray,
+  },
+  imputtitel: {
+    color: color.black,
+    // marginBottom: 5,
+    // padding: 5,
+    position: 'absolute',
+    top: -12,
+    left: 12,
+    backgroundColor: color.white,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 16,
-  },
-  productItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: color.blue,
     padding: 8,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    marginRight: 8,
-    borderRadius: 60,
-  },
-  productDetails: {
-    flex: 1,
-  },
-  productText: {
-    color: color.black,
-    marginBottom: 5,
-  },
-  btncontainer: {
-    alignItems: 'center',
+    borderRadius: 12,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  editbtn: {
+  buttontext: {
     color: color.black,
     fontSize: 16,
     fontWeight: '600',
-  },
-  trashimg: {
-    height: 24,
-    width: 24,
   },
 });

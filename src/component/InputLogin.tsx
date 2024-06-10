@@ -21,16 +21,10 @@ export const InputLogin: React.FC<InputLoginProps> = ({
   errorText,
 }) => {
   return (
-    <View
-      style={{
-        backgroundColor: color.white,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+    <View style={styles.mainview}>
       <View style={{width: '80%'}}>
         <View style={styles.inputview}>
           <TextInput
-            // value={value}
             placeholder={placeholder}
             placeholderTextColor="#8c8c8c"
             keyboardType={keyboardType}
@@ -50,6 +44,11 @@ export const InputLogin: React.FC<InputLoginProps> = ({
 };
 
 const styles = StyleSheet.create({
+  mainview: {
+    backgroundColor: color.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   inputview: {
     backgroundColor: color.gray1,
     borderRadius: 14,
