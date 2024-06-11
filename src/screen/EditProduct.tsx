@@ -123,18 +123,25 @@ export const EditProduct: React.FC = () => {
     <View style={styles.container}>
       <CustomHeader label={'Edit Product'} />
       <View style={{marginHorizontal: 12}}>
-        <View style={styles.imagePickerContainer}>
-          {newProductImage && (
-            <View>
-              <Image source={{uri: newProductImage}} style={styles.image} />
-              <Pressable style={styles.iconimage} onPress={selectImage}>
-                <Image
-                  source={Images.cameraicon}
-                  style={{width: 20, height: 20}}
-                />
-              </Pressable>
-            </View>
-          )}
+        <View style={{alignItems: 'center', marginBottom: 16}}>
+          <View
+            style={[
+              styles.image,
+              {backgroundColor: newProductImage ? 'transparent' : color.gray1},
+            ]}>
+            {newProductImage && (
+              <Image
+                source={{uri: newProductImage}}
+                style={{width: '100%', height: '100%', borderRadius: 100}}
+              />
+            )}
+            {!newProductImage && (
+              <Image source={Images.addimage} style={{width: 42, height: 42}} />
+            )}
+            <Pressable style={styles.iconimage} onPress={selectImage}>
+              <Image source={Images.cameraicon} style={styles.cameraimage} />
+            </Pressable>
+          </View>
         </View>
         <View style={styles.textview}>
           <Text style={styles.imputtitel}>Name:</Text>
@@ -189,6 +196,9 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   iconimage: {
     position: 'absolute',
@@ -201,6 +211,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  cameraimage: {
+    width: 20,
+    height: 20,
+  },
   textview: {
     marginTop: 14,
     borderWidth: 1,
@@ -210,8 +224,6 @@ const styles = StyleSheet.create({
   },
   imputtitel: {
     color: color.black,
-    // marginBottom: 5,
-    // padding: 5,
     position: 'absolute',
     top: -12,
     left: 12,

@@ -69,12 +69,10 @@ export const HomeScreen: React.FC = () => {
   const buttonsArray = [
     // {
     //   name: 'Add Product',
-    //   onPress: (item: Category) => {
+    //   onPress: () => {
     //     navigate({
     //       screenName: Routes.Category,
-    //       params: {
-    //         item: item,
-    //       },
+    //       params: {item: {}},
     //     });
     //   },
     // },
@@ -159,7 +157,7 @@ export const HomeScreen: React.FC = () => {
                     style={styles.categoryImage}
                   />
                 )}
-                <View style={styles.categoryDetails}>
+                <View>
                   <Text style={styles.categoryText}>{item.name}</Text>
                 </View>
                 <View style={styles.menuButtonContainer}>
@@ -220,9 +218,6 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 100,
     marginRight: 10,
-  },
-  categoryDetails: {
-    // flex: 1,
   },
   categoryText: {
     color: color.black,

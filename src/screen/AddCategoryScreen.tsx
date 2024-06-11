@@ -87,9 +87,6 @@ export const AddCategoryScreen: React.FC = () => {
           value={categoryName}
           onChangeText={setCategoryName}
         />
-        <Pressable style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>Select Image</Text>
-        </Pressable>
         <Pressable style={styles.button} onPress={addCategory}>
           <Text style={styles.buttonText}>Add Category</Text>
         </Pressable>
