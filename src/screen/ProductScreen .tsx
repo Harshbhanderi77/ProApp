@@ -229,7 +229,7 @@ export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
         <Image source={{uri: item.image}} style={styles.productImage} />
         <View>
           <Text style={styles.productText}>{item.name}</Text>
-          <Text style={styles.productText}>$ {item.price}</Text>
+          <Text style={styles.productText}>₹ {item.price}</Text>
         </View>
         <View style={styles.menuButtonContainer}>
           <Pressable

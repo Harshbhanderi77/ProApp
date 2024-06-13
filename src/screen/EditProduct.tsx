@@ -125,7 +125,7 @@ export const EditProduct: React.FC = () => {
   return (
     <View style={styles.container}>
       <SecondHeader label={'Edit Product'} />
-      <View style={{marginHorizontal: 12}}>
+      <View style={{marginHorizontal: 12, marginTop: 16}}>
         <View style={{alignItems: 'center', marginBottom: 16}}>
           <View
             style={[
@@ -159,7 +159,7 @@ export const EditProduct: React.FC = () => {
         <View style={styles.textview}>
           <Text style={styles.imputtitel}>Price:</Text>
           <TextInput
-            placeholder="$ 12.00"
+            placeholder="₹ 12.00"
             placeholderTextColor="#8c8c8c"
             keyboardType={'number-pad'}
             value={newProductPrice}

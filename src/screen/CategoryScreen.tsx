@@ -115,7 +115,7 @@ export const CategoryScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <SecondHeader label={'Edit Category'} />
-      <View style={{marginHorizontal: 12}}>
+      <View style={{marginHorizontal: 12, marginTop: 16}}>
         <View style={{alignItems: 'center', marginBottom: 16}}>
           <View
             style={[

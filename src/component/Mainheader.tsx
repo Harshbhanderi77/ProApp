@@ -49,8 +49,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 12,
     padding: 10,
-    zIndex: 10,
+    elevation: 8,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
   logoutButton: {
     backgroundColor: color.blue,

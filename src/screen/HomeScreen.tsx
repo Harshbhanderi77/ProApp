@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
     borderColor: color.blue,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    elevation: 5,
   },
   modalHeader: {
     justifyContent: 'center',
