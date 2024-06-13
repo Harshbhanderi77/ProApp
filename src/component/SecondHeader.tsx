@@ -1,45 +1,21 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {goBack, navigate, Routes} from '../navigation/AppNavigator.tsx';
+import {goBack} from '../navigation/AppNavigator.tsx';
 import {color} from '../style/color.ts';
 import {Images} from '../assets/images.ts';
 
 interface CartheaderProps {
   label: string;
-  categoryId: string;
 }
 
-export const CustomHeader: React.FC<CartheaderProps> = ({
-  label,
-  categoryId,
-}) => {
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const handleAddCategory = () => {
-    setMenuVisible(false);
-    navigate({
-      screenName: Routes.EditProduct,
-      params: {item: {}, isEditing: false, categoryId: categoryId},
-    });
-  };
-
+export const SecondHeader: React.FC<CartheaderProps> = ({label}) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={() => goBack()} style={styles.backButton}>
         <Image source={Images.backbtn} style={styles.backButtonImage} />
       </Pressable>
-      <Text style={styles.headerText}>{label}</Text>
-      <View style={styles.secondview}>
-        <Pressable onPress={() => setMenuVisible(!menuVisible)}>
-          <Image source={Images.menubtn} style={styles.appiconimg} />
-        </Pressable>
-        {menuVisible && (
-          <View style={styles.menu}>
-            <Pressable onPress={handleAddCategory} style={styles.menuItem}>
-              <Text style={styles.menuItemText}>Add New Product</Text>
-            </Pressable>
-          </View>
-        )}
+      <View style={styles.textview}>
+        <Text style={styles.headerText}>{label}</Text>
       </View>
     </View>
   );
@@ -48,7 +24,6 @@ export const CustomHeader: React.FC<CartheaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: color.white,
-    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
@@ -65,7 +40,9 @@ const styles = StyleSheet.create({
     height: 24,
   },
   textview: {
+    position: 'absolute',
     alignItems: 'center',
+    width: '100%',
   },
   headerText: {
     color: color.black,

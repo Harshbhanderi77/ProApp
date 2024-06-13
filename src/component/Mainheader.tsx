@@ -12,7 +12,7 @@ export const MainHeader: React.FC = () => {
     setMenuVisible(false);
     navigate({
       screenName: Routes.Category,
-      params: {item: {}},
+      params: {item: {}, isEditing: false},
     });
   };
 

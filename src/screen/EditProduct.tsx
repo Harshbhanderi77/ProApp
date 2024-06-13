@@ -10,27 +10,27 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {color} from '../style/color.ts';
-import {CustomHeader} from '../component/CustomHeader.tsx';
 import {Images} from '../assets/images.ts';
 import {RouteProp, useRoute, useNavigation} from '@react-navigation/native';
 import {StackParamsList} from '../navigation/AppNavigator.tsx';
+import {SecondHeader} from '../component/SecondHeader.tsx';
 
 interface Product {
   id: string;
   name: string;
   image: string | null;
   price: string;
+  categoryId: string;
 }
 
 export const EditProduct: React.FC = () => {
   const routes = useRoute<RouteProp<StackParamsList, 'EditProduct'>>();
-  const {item} = routes.params;
+  const {item, isEditing, categoryId} = routes.params;
   const navigation = useNavigation();
   const [products, setProducts] = useState<Product[]>([]);
   const [newProductName, setNewProductName] = useState('');
   const [newProductImage, setNewProductImage] = useState<string | null>(null);
   const [newProductPrice, setNewProductPrice] = useState('');
-  const [isEditingProduct, setIsEditingProduct] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
   useEffect(() => {
@@ -53,9 +53,14 @@ export const EditProduct: React.FC = () => {
       name: newProductName,
       image: newProductImage,
       price: newProductPrice,
+      categoryId: categoryId,
     };
     const updatedProducts = [...products, newProductObject];
     setProducts(updatedProducts);
+    console.log(
+      'updatedProducts',
+      JSON.stringify(updatedProducts, undefined, 4),
+    );
     await AsyncStorage.setItem('products', JSON.stringify(updatedProducts));
     resetFields();
     navigation.goBack();
@@ -100,7 +105,6 @@ export const EditProduct: React.FC = () => {
   };
 
   const resetFields = () => {
-    setIsEditingProduct(false);
     setCurrentProduct(null);
     setNewProductName('');
     setNewProductImage(null);
@@ -115,13 +119,12 @@ export const EditProduct: React.FC = () => {
     setNewProductName(product.name);
     setNewProductImage(product.image);
     setNewProductPrice(product.price);
-    setIsEditingProduct(true);
     setCurrentProduct(product);
   };
 
   return (
     <View style={styles.container}>
-      <CustomHeader label={'Edit Product'} />
+      <SecondHeader label={'Edit Product'} />
       <View style={{marginHorizontal: 12}}>
         <View style={{alignItems: 'center', marginBottom: 16}}>
           <View
@@ -158,6 +161,7 @@ export const EditProduct: React.FC = () => {
           <TextInput
             placeholder="$ 12.00"
             placeholderTextColor="#8c8c8c"
+            keyboardType={'number-pad'}
             value={newProductPrice}
             onChangeText={setNewProductPrice}
             style={styles.input}
@@ -165,10 +169,16 @@ export const EditProduct: React.FC = () => {
         </View>
         <View style={{marginTop: 16}}>
           <Pressable
-            onPress={isEditingProduct ? updateProduct : addProduct}
+            onPress={async () => {
+              if (isEditing) {
+                await updateProduct();
+              } else {
+                await addProduct();
+              }
+            }}
             style={styles.buttonContainer}>
             <Text style={styles.buttontext}>
-              {isEditingProduct ? 'Update Product' : 'Add Product'}
+              {isEditing ? 'Update Product' : 'Add Product'}
             </Text>
           </Pressable>
         </View>

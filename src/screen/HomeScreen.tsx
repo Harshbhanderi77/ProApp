@@ -4,6 +4,7 @@ import {
   Image,
   Modal,
   Pressable,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -25,28 +26,39 @@ export interface Category {
 const predefinedCategories: Category[] = [
   {
     id: '1',
-    name: 'Category 1',
-    image: 'https://via.placeholder.com/60',
+    name: 'Gujrati',
+    image:
+      'https://www.nehascookbook.com/wp-content/uploads/2022/10/Shrad-thali-WS.jpg',
   },
   {
     id: '2',
-    name: 'Category 2',
-    image: 'https://via.placeholder.com/60',
+    name: 'Panjabi',
+    image:
+      'https://t4.ftcdn.net/jpg/03/45/64/29/360_F_345642976_fzD1FcOY69LghUbXNmyCRZPRSwRVDNlj.jpg',
   },
   {
     id: '3',
-    name: 'Category 3',
-    image: 'https://via.placeholder.com/60',
+    name: 'Chinese',
+    image:
+      'https://www.recipetineats.com/wp-content/uploads/2023/06/Chili-crisp-noodles_2.jpg?w=747&h=747&crop=1',
   },
   {
     id: '4',
-    name: 'Category 4',
-    image: 'https://via.placeholder.com/60',
+    name: 'South Indian',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinCKGPNr2g5zx4Qet43b2n3rGXhO-_ppJww&s',
   },
   {
     id: '5',
-    name: 'Category 5',
-    image: 'https://via.placeholder.com/60',
+    name: 'Mexican',
+    image:
+      'https://images.immediate.co.uk/production/volatile/sites/30/2022/10/Pork-carnitas-b94893e.jpg?quality=90&resize=556,505',
+  },
+  {
+    id: '6',
+    name: 'Italian',
+    image:
+      'https://www.eatingwell.com/thmb/eL6SiYsG7FVKf8MYDilOqrv63gQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/3837844-2d4accd800f44c6e9a41d5aad0811dbe.jpg',
   },
 ];
 
@@ -56,6 +68,8 @@ export const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     const fetchCategories = async () => {
       const storedCategories = await AsyncStorage.getItem('categories');
@@ -67,21 +81,12 @@ export const HomeScreen: React.FC = () => {
   }, []);
 
   const buttonsArray = [
-    // {
-    //   name: 'Add Product',
-    //   onPress: () => {
-    //     navigate({
-    //       screenName: Routes.Category,
-    //       params: {item: {}},
-    //     });
-    //   },
-    // },
     {
       name: 'Edit',
       onPress: (item: Category) => {
         navigate({
           screenName: Routes.Category,
-          params: {item: item},
+          params: {item: item, isEditing: true},
         });
       },
     },
@@ -94,6 +99,7 @@ export const HomeScreen: React.FC = () => {
   ];
 
   const loadCategories = async () => {
+    setRefreshing(true);
     const storedCategories = await AsyncStorage.getItem('categories');
     if (storedCategories) {
       setCategories(JSON.parse(storedCategories));
@@ -104,6 +110,7 @@ export const HomeScreen: React.FC = () => {
         JSON.stringify(predefinedCategories),
       );
     }
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -141,6 +148,12 @@ export const HomeScreen: React.FC = () => {
         <FlatList
           data={categories}
           extraData={categories}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={loadCategories}
+            />
+          }
           renderItem={({item}) => (
             <View>
               <Pressable
@@ -208,7 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 20,
     padding: 6,
     elevation: 5,
     backgroundColor: color.white,
@@ -221,8 +234,8 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: color.black,
-    marginBottom: 5,
     fontSize: 16,
+    width: 160,
     fontWeight: '600',
   },
   menuButtonContainer: {
@@ -242,15 +255,15 @@ const styles = StyleSheet.create({
     backgroundColor: color.gray1,
     borderWidth: 1,
     borderColor: color.blue,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     elevation: 5,
   },
   modalHeader: {
     justifyContent: 'center',
     alignItems: 'flex-end',
     top: -6,
-    marginRight: 10,
+    marginRight: 12,
   },
   modalCloseIcon: {
     height: 24,

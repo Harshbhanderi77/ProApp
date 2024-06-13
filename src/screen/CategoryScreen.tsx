@@ -10,14 +10,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {color} from '../style/color.ts';
-import {CustomHeader} from '../component/CustomHeader.tsx';
 import {Images} from '../assets/images.ts';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {
-  navigate,
-  Routes,
-  StackParamsList,
-} from '../navigation/AppNavigator.tsx';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {StackParamsList} from '../navigation/AppNavigator.tsx';
+import {SecondHeader} from '../component/SecondHeader.tsx';
 
 interface Category {
   id: string;
@@ -27,13 +23,13 @@ interface Category {
 
 export const CategoryScreen: React.FC = () => {
   const routes = useRoute<RouteProp<StackParamsList, 'CategoryScreen'>>();
-  const {item} = routes.params;
+  const {item, isEditing} = routes.params;
+  const navigation = useNavigation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState('');
   const [newCategoryImageUrl, setNewCategoryImageUrl] = useState<string | null>(
     null,
   );
-  const [isEditing, setIsEditing] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
   useEffect(() => {
@@ -57,10 +53,14 @@ export const CategoryScreen: React.FC = () => {
       image: newCategoryImageUrl,
     };
     const updatedCategories = [...categories, newCategoryObject];
+    console.log(
+      'updatedCategories',
+      JSON.stringify(updatedCategories, undefined, 4),
+    );
     setCategories(updatedCategories);
     await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
     resetFields();
-    navigate({screenName: Routes.Home});
+    navigation.goBack();
   };
 
   const updateCategory = async () => {
@@ -79,7 +79,7 @@ export const CategoryScreen: React.FC = () => {
     setCategories(updatedCategories);
     await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
     resetFields();
-    navigate({screenName: Routes.Home});
+    navigation.goBack();
   };
 
   const selectImage = async () => {
@@ -97,13 +97,10 @@ export const CategoryScreen: React.FC = () => {
   };
 
   const resetFields = () => {
-    setIsEditing(false);
     setCurrentCategory(null);
     setNewCategory('');
     setNewCategoryImageUrl(null);
   };
-
-  console.log(item);
 
   useEffect(() => {
     startEditing(item);
@@ -112,13 +109,12 @@ export const CategoryScreen: React.FC = () => {
   const startEditing = (category: Category) => {
     setNewCategory(category.name);
     setNewCategoryImageUrl(category.image);
-    setIsEditing(true);
     setCurrentCategory(category);
   };
 
   return (
     <View style={styles.container}>
-      <CustomHeader label={'Edit Category'} />
+      <SecondHeader label={'Edit Category'} />
       <View style={{marginHorizontal: 12}}>
         <View style={{alignItems: 'center', marginBottom: 16}}>
           <View
@@ -156,7 +152,13 @@ export const CategoryScreen: React.FC = () => {
         </View>
         <View style={{marginTop: 16}}>
           <Pressable
-            onPress={isEditing ? updateCategory : addCategory}
+            onPress={async () => {
+              if (isEditing) {
+                await updateCategory();
+              } else {
+                await addCategory();
+              }
+            }}
             style={styles.buttonContainer}>
             <Text style={styles.buttontext}>
               {isEditing ? 'Update Category' : 'Add Category'}
