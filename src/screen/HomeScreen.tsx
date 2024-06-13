@@ -148,6 +148,7 @@ export const HomeScreen: React.FC = () => {
         <FlatList
           data={categories}
           extraData={categories}
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

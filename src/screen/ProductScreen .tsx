@@ -251,6 +251,7 @@ export const ProductScreen: React.FC<ProductScreenProps> = ({route}) => {
         data={products}
         keyExtractor={item => item.id}
         renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refreshProducts} />
         }
